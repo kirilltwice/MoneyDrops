@@ -3,6 +3,8 @@ settings:
   monsters: "4.00~8.50"
   # ###################
   players-percentage: 10
+  # ###################
+  premium-multiplier: 1.5
 
 message:
   kill: "&8[&6Убиство&8] &fНа ваш баланс пополнено: %s монет"

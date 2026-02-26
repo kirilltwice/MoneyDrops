@@ -1,10 +1,9 @@
 package dev.twice.moneydrops.config;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import dev.twice.moneydrops.DropsPlugin;
-
-import org.jetbrains.annotations.NotNull;
 import lombok.Getter;
 
 @Getter
@@ -48,7 +47,7 @@ public class ConfigManager {
         }
 
         this.playersPercentage = config.getDouble("settings.players-percentage");
-        this.premiumMultiplier = config.getDouble("settings.premium-multiplier");
+        this.premiumMultiplier = config.getDouble("settings.premium-multiplier", 1.5);
         this.killMessage = config.getString("message.kill");
     }
 }
