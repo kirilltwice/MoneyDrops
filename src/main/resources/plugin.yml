@@ -1,0 +1,10 @@
+name: MoneyDrops
+main: dev.twice.moneydrops.DropsPlugin
+
+authors: [ Twice ]
+
+version: '1.0-SNAPSHOT'
+api-version: '1.21'
+
+softdepend:
+  - Vault
