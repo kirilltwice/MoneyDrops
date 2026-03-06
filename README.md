@@ -1,27 +1,47 @@
-<div align="center">
-  <h1>MoneyDrops</h1>
-  <p>
-    <img src="https://img.shields.io/badge/Minecraft-1.21.4-brightgreen?style=for-the-badge&logo=minecraft" alt="Minecraft 1.21.4" />
-    <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk" alt="Java 21" />
-    <img src="https://img.shields.io/badge/PaperMC-API-blue?style=for-the-badge" alt="Paper API" />
-  </p>
-</div>
+# MoneyDrops
 
-## 🛠 Инструкция для разработчиков (API)
-Для работы с API плагина используйте глобальный инстанс `MoneyDropsAPI.getInstance()`.
+![Minecraft 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-green)
+![Java 21](https://img.shields.io/badge/Java-21-orange)
+![Paper API](https://img.shields.io/badge/API-Paper-blue)
 
-### 1. Событие (Bukkit Event)
-**`MoneyDropEvent`** вызывается прямо перед начислением денег (до обращения к Vault). Работает с интерфейсом `Cancellable`.
-* `getKiller()` — Получить Игрока-убийцу.
-* `getVictim()` — Узнать убитую сущность `Entity`.
-* `getBaseReward()` — Узнать изначальную награда, рассчитанную конфигом.
-* `getFinalReward()` / `setFinalReward(double)` — Переопределить итоговую награду к выдаче.
-* `setCancelled(true)` - Запретить выдачу (При отмене ивент прекращает расчет).
+## Developer Guide (API)
 
-### 2. Свои модификаторы рассчета (RewardModifiers)
-Позволит вашему стороннему плагину динамически пересчитывать награды (например: х2 ночью, дополнительные деньги для фракции или клана убийцы):
+To interact with the plugin API, use the global instance:
+
 ```java
-// На этот лямбда-метод плагин будет опираться при каждом расчете
+MoneyDropsAPI.getInstance();
+```
+
+---
+
+## 1. Event (Bukkit Event)
+
+### MoneyDropEvent
+
+This event is triggered **before the reward is given** (before the Vault transaction).  
+The event implements the `Cancellable` interface.
+
+Methods:
+
+- `getKiller()` — returns the player who killed the entity.
+- `getVictim()` — returns the killed `Entity`.
+- `getBaseReward()` — returns the base reward calculated from the config.
+- `getFinalReward()` — returns the final reward.
+- `setFinalReward(double)` — allows overriding the final reward.
+- `setCancelled(true)` — cancels the reward completely.
+
+If the event is cancelled, the reward calculation will stop.
+
+---
+
+## 2. Custom Reward Modifiers
+
+Allows other plugins to dynamically modify rewards.  
+Example use cases: **VIP bonuses, night bonuses, faction bonuses, etc.**
+
+Example:
+
+```java
 MoneyDropsAPI.getInstance().registerModifier((player, victim, currentReward) -> {
     if (player.hasPermission("vip.bonus")) {
         return currentReward * 1.5;
@@ -30,20 +50,44 @@ MoneyDropsAPI.getInstance().registerModifier((player, victim, currentReward) -> 
 });
 ```
 
-### 3. Временные бустеры для игроков
-Метод позволяет выдать временный множитель монет (работает через `ConcurrentHashMap`, сохраняется до перезапуска сервера или окончания срока):
+---
+
+## 3. Temporary Player Boosters
+
+You can give players temporary reward multipliers.
+
+Internally the plugin uses `ConcurrentHashMap`.  
+The multiplier works until:
+- the time expires
+- the server restarts
+
+Example:
+
 ```java
 long duration = TimeUnit.MINUTES.toMillis(30);
-// Выдать игроку множитель x2.0 на 30 минут 
+
+// Give player a x2.0 multiplier for 30 minutes
 MoneyDropsAPI.getInstance().addTemporaryMultiplier(player, 2.0, duration);
 ```
 
-### 4. Игнорирование ферм 
-Блокировка выпадения денег для искусственно созданных или заспавненных плагином сторонних существ (поддерживается Paper API `getEntitySpawnReason`)
+---
+
+## 4. Farm Protection (Spawn Reason Filtering)
+
+Prevents money drops from artificially spawned mobs.
+
+Uses Paper API `getEntitySpawnReason`.
+
+Example:
+
 ```java
-// Отключение дропа монет с мобов, рожденных из Рассадников монстров (Спавнеров)
+// Disable money drops from mobs spawned by spawners
 MoneyDropsAPI.getInstance().addIgnoredSpawnReason(CreatureSpawnEvent.SpawnReason.SPAWNER);
 
-// Аналогично для Яиц призыва Спавна:
+// Disable money drops from spawn eggs
 MoneyDropsAPI.getInstance().addIgnoredSpawnReason(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
 ```
+
+---
+
+If you have suggestions or improvements, feel free to contribute.
