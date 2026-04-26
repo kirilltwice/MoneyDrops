@@ -48,6 +48,10 @@ public class RewardService {
 
         if (event.isCancelled() || event.getFinalReward() <= 0) return;
 
+        if (victim instanceof final Player target) {
+            vault.withdraw(target, Math.min(event.getFinalReward(), vault.getBalance(target)));
+        }
+
         giveReward(killer, event.getFinalReward());
     }
 
