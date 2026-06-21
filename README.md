@@ -70,6 +70,16 @@ long duration = TimeUnit.MINUTES.toMillis(30);
 MoneyDropsAPI.getInstance().addTemporaryMultiplier(player, 2.0, duration);
 ```
 
+You can also scope a multiplier to a specific reward category using `RewardTarget`
+(`ALL`, `MONSTERS`, `PLAYERS`, `AMBIENT`). The version without a target defaults to `ALL`.
+
+```java
+long duration = TimeUnit.MINUTES.toMillis(2);
+
+// Give player +10% only from mob kills for 2 minutes
+MoneyDropsAPI.getInstance().addTemporaryMultiplier(player, 1.1, duration, RewardTarget.MONSTERS);
+```
+
 ---
 
 ## 4. Farm Protection (Spawn Reason Filtering)

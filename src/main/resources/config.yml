@@ -7,4 +7,4 @@ settings:
   premium-multiplier: 1.5
 
 message:
-  kill: "&8[&6Убиство&8] &fНа ваш баланс пополнено: %s монет"
+  kill: "<dark_gray>[<gold>Убийство<dark_gray>] <white>На ваш баланс пополнено: %s монет"

@@ -42,17 +42,27 @@ public class MoneyDropsAPI {
     }
 
     public void addTemporaryMultiplier(final @NotNull Player player, final double multiplier, final long durationMillis) {
-        multipliers.put(player.getUniqueId(), new TemporaryMultiplier(multiplier, System.currentTimeMillis() + durationMillis));
+        addTemporaryMultiplier(player, multiplier, durationMillis, RewardTarget.ALL);
+    }
+
+    public void addTemporaryMultiplier(final @NotNull Player player, final double multiplier, final long durationMillis, final @NotNull RewardTarget target) {
+        multipliers.put(player.getUniqueId(), new TemporaryMultiplier(multiplier, System.currentTimeMillis() + durationMillis, target));
     }
 
     public double getPlayerMultiplier(final @NotNull Player player) {
+        return getPlayerMultiplier(player, RewardTarget.ALL);
+    }
+
+    public double getPlayerMultiplier(final @NotNull Player player, final @NotNull RewardTarget target) {
         final TemporaryMultiplier tm = multipliers.get(player.getUniqueId());
         if (tm != null) {
             if (System.currentTimeMillis() > tm.expirationTime()) {
                 multipliers.remove(player.getUniqueId());
                 return 1.0;
             }
-            return tm.multiplier();
+            if (tm.target() == RewardTarget.ALL || tm.target() == target) {
+                return tm.multiplier();
+            }
         }
         return 1.0;
     }
@@ -82,5 +92,5 @@ public class MoneyDropsAPI {
         return ignoredReasons.contains(reason);
     }
 
-    private record TemporaryMultiplier(double multiplier, long expirationTime) {}
+    private record TemporaryMultiplier(double multiplier, long expirationTime, RewardTarget target) {}
 }

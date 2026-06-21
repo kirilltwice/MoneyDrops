@@ -22,11 +22,11 @@ public class MoneyDropEvent extends Event implements Cancellable {
     private double finalReward;
     private boolean cancelled;
 
-    public MoneyDropEvent(final @NotNull Player killer, final @NotNull Entity victim, final double baseReward) {
+    public MoneyDropEvent(final @NotNull Player killer, final @NotNull Entity victim, final double baseReward, final double finalReward) {
         this.killer = killer;
         this.victim = victim;
         this.baseReward = baseReward;
-        this.finalReward = baseReward;
+        this.finalReward = finalReward;
     }
 
     @Override

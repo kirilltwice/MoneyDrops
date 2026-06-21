@@ -10,6 +10,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import dev.twice.moneydrops.DropsPlugin;
 import dev.twice.moneydrops.api.MoneyDropsAPI;
 import dev.twice.moneydrops.api.RewardModifier;
+import dev.twice.moneydrops.api.RewardTarget;
 import dev.twice.moneydrops.api.events.MoneyDropEvent;
 import dev.twice.moneydrops.config.ConfigManager;
 import dev.twice.moneydrops.hooks.VaultHook;
@@ -41,9 +42,9 @@ public class RewardService {
             finalReward = modifier.modify(killer, victim, finalReward);
         }
 
-        finalReward *= MoneyDropsAPI.getInstance().getPlayerMultiplier(killer);
+        finalReward *= MoneyDropsAPI.getInstance().getPlayerMultiplier(killer, categoryOf(victim));
 
-        final MoneyDropEvent event = new MoneyDropEvent(killer, victim, finalReward);
+        final MoneyDropEvent event = new MoneyDropEvent(killer, victim, baseReward, finalReward);
         plugin.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled() || event.getFinalReward() <= 0) return;
@@ -75,6 +76,14 @@ public class RewardService {
     public void giveReward(final @NotNull Player killer, final double reward) {
         vault.deposit(killer, reward);
         killer.sendActionBar(ColorUtility.colorize(String.format(config.getKillMessage(), String.format("%.2f", reward))));
+    }
+
+    private RewardTarget categoryOf(final @NotNull Entity victim) {
+        return switch (victim) {
+            case final Player ignored -> RewardTarget.PLAYERS;
+            case final Monster ignored -> RewardTarget.MONSTERS;
+            default -> RewardTarget.AMBIENT;
+        };
     }
 
     private double randomBetween(final double min, final double max) {
