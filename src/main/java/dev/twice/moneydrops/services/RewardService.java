@@ -87,6 +87,7 @@ public class RewardService {
     }
 
     private double randomBetween(final double min, final double max) {
+        if (min >= max) return min;
         return ThreadLocalRandom.current().nextDouble(min, max);
     }
 }
