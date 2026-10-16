@@ -1,7 +1,7 @@
 # MoneyDrops
 
 ![Minecraft 1.21.4](https://img.shields.io/badge/Minecraft-1.21.4-green)
-![Java 21](https://img.shields.io/badge/Java-21-orange)
+![Java 25](https://img.shields.io/badge/Java-25-orange)
 ![Paper API](https://img.shields.io/badge/API-Paper-blue)
 
 ## Developer Guide (API)
